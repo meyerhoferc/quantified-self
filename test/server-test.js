@@ -46,7 +46,6 @@ describe('Server', function() {
     it('should return a food object if food is found', function(done){
       this.request.get('/api/foods/1', function(error, response){
         if(error){ done(error); }
-        console.log(response.body);
         assert.deepEqual(JSON.parse(response.body).food, {"name":"banana", "calories":50});
         done();
       });
