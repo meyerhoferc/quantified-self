@@ -1,7 +1,7 @@
 const assert = require('chai').assert;
 const app = require('../server');
 const request = require('request');
-
+const pry = require('pryjs')
 
 describe('Server', function() {
   before(function(done){
@@ -33,6 +33,21 @@ describe('Server', function() {
       this.request.get('/api/foods/2', function(error, response){
         if(error){ done(error); }
         assert.equal(response.statusCode, 404);
+        done();
+      });
+    });
+    it('should return a 200 status code if food is found', function(done){
+      this.request.get('/api/foods/1', function(error, response){
+        if(error){ done(error); }
+        assert.equal(response.statusCode, 200);
+        done();
+      });
+    });
+    it('should return a food object if food is found', function(done){
+      this.request.get('/api/foods/1', function(error, response){
+        if(error){ done(error); }
+        console.log(response.body);
+        assert.deepEqual(JSON.parse(response.body).food, {"name":"banana", "calories":50});
         done();
       });
     });
