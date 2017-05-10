@@ -127,6 +127,11 @@ describe('Food Endpoints', () => {
   })
 
   describe('POST /api/foods/', () => {
+    beforeEach((done) => {
+      database.raw('INSERT INTO foods (name, calories, created_at) VALUES(?,?,?)', ['Banana', 50, new Date])
+      .then(() => done())
+    })
+
     afterEach((done) => {
       database.raw('TRUNCATE foods RESTART IDENTITY')
       .then(() => done())
@@ -135,17 +140,28 @@ describe('Food Endpoints', () => {
     it('should create a food in the database with the desired parameters', (done) => {
       this.request.post({
         headers: {'content-type' : 'application/x-www-form-urlencoded'},
-        url: '/api/foods?name=banana&calories=50'},(error, response) => {
+        url: '/api/foods?name=orange&calories=70'},(error, response) => {
         if (error) { done(error) }
         let newFood = JSON.parse(response.body)
 
-        const name = 'banana'
-        const calories = 50
-        const id = 1
+        const name = 'orange'
+        const calories = 70
+        const id = 2
 
         assert.equal(newFood.name, name)
         assert.equal(newFood.calories, calories)
         assert.equal(newFood.id, id)
+        done()
+      })
+    })
+
+    it('should return a 404 if the food parameters are invalid', (done) => {
+      this.request.post({
+        headers: {'content-type' : 'application/x-www-form-urlencoded'},
+        url: '/api/foods?name=Banana&calories=50'},(error, response) => {
+        if (error) { done(error) }
+
+        assert.equal(response.statusCode, 404)
         done()
       })
     })
@@ -197,9 +213,12 @@ describe('Food Endpoints', () => {
 
   describe('PUT /api/foods/:id', () => {
     beforeEach((done) => {
+      database.raw('INSERT INTO foods (name, calories, created_at) VALUES(?,?,?)', ['Banana', 50, new Date])
+      .then(() => {
       database.raw('INSERT INTO foods (name, calories, created_at) VALUES(?,?,?)', ['Donut', 500, new Date])
-      .then(() => done())
+      .then(() => done())})
     })
+
     afterEach((done) => {
       database.raw('TRUNCATE foods RESTART IDENTITY')
       .then(() => done())
@@ -208,14 +227,25 @@ describe('Food Endpoints', () => {
     it('should update the food with the new parameters', (done) => {
       this.request.put({
         headers: {'content-type' : 'application/x-www-form-urlencoded'},
-        url: '/api/foods/1?name=banana&calories=50'}, (error, response) => {
+        url: '/api/foods/2?name=orange&calories=50'}, (error, response) => {
         if (error) { done(error) }
 
         let updatedFood = JSON.parse(response.body)
 
-        assert.equal(updatedFood.id, 1)
-        assert.equal(updatedFood.name, 'banana')
+        assert.equal(updatedFood.id, 2)
+        assert.equal(updatedFood.name, 'orange')
         assert.equal(updatedFood.calories, 50 )
+
+        done()
+      })
+    })
+    it('should return a 404 if the parameters are invalid', (done) => {
+      this.request.put({
+        headers: {'content-type' : 'application/x-www-form-urlencoded'},
+        url: '/api/foods/1?name=Donut&calories=3'}, (error, response) => {
+        if (error) { done(error) }
+
+        assert.equal(response.statusCode, 404)
 
         done()
       })
@@ -264,7 +294,7 @@ describe('Food Endpoints', () => {
         done()
       })
     })
-    
+
     it('should return an empty array if no results found', (done) => {
       this.request.get({
         headers: {'content-type' : 'application/x-www-form-urlencoded'},
