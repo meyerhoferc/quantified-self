@@ -18,6 +18,7 @@ app.delete('/api/foods/:id', FoodsController.destroy);
 app.put('/api/foods/:id', FoodsController.update);
 app.get('/api/search/foods', FoodsController.search);
 
+app.get('/api/v1/meals/:id', MealsController.show);
 app.get('/api/v1/meals/', MealsController.index);
 
 if (!module.parent) {

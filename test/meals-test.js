@@ -83,4 +83,69 @@ describe('Meals Endpoints', function() {
       });
     });
   });
+
+  describe('GET api/v1/meals/:id', function() {
+    beforeEach((done) => {
+      database.raw('INSERT INTO foods (name, calories, created_at) VALUES(?,?,?)', ['Doner', 500, new Date])
+      .then(() => {
+        database.raw('INSERT INTO foods (name, calories, created_at) VALUES(?,?,?)', ['Lettuce', 10, new Date])
+        .then(() => {
+          database.raw('INSERT INTO meals (name, total_calories, daily_log, created_at) VALUES(?,?,?,?)', ['Breakfast', 100, new Date, new Date])
+          .then(() => {
+            database.raw('INSERT INTO meals (name, total_calories, daily_log, created_at) VALUES(?,?,?,?)', ['Lunch', 20, new Date, new Date])
+            .then(() => {
+              database.raw('INSERT INTO meals_foods (food_id, meal_id, created_at) VALUES(?,?,?)', [1, 1, new Date])
+              .then(() => {
+                database.raw('INSERT INTO meals_foods (food_id, meal_id, created_at) VALUES(?,?,?)', [1, 1, new Date])
+                .then(() => {
+                  database.raw('INSERT INTO meals_foods (food_id, meal_id, created_at) VALUES(?,?,?)', [2, 2, new Date])
+                  .then(() => {
+                    database.raw('INSERT INTO meals_foods (food_id, meal_id, created_at) VALUES(?,?,?)', [2, 2, new Date])
+                    .then(() => done())
+                  }).catch(done)
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+
+    afterEach((done) => {
+      database.raw('TRUNCATE foods RESTART IDENTITY')
+      .then(() => {
+        database.raw('TRUNCATE meals_foods RESTART IDENTITY')
+        .then(() => {
+          database.raw('TRUNCATE meals RESTART IDENTITY')
+          .then(() => done());
+        });
+      });
+    });
+
+    it('should return a 200 status code', function(done) {
+      this.request.get('/api/v1/meals/1', function(error, response){
+        if(error){ done(error); }
+        assert.equal(response.statusCode, 200);
+        done();
+      });
+    });
+
+    it('should return a 404 status code if not found', function(done) {
+      this.request.get('/api/v1/meals/111', function(error, response){
+        if(error){ done(error); }
+        assert.equal(response.statusCode, 404);
+        done();
+      });
+    });
+
+    it('should return a meal with the equivalent id', function(done) {
+      this.request.get('/api/v1/meals/1', function(error, response){
+        if(error){ done(error); }
+        const meal = JSON.parse(response.body);
+        assert.equal(meal.name, "Breakfast");
+        assert.equal(meal.total_calories, 100);
+        done();
+      });
+    })
+  })
 });
