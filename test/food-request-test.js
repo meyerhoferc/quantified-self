@@ -237,7 +237,8 @@ describe('Food Endpoints', () => {
 
         done()
       })
-    })
+    });
+
     it('should return a 404 if the parameters are invalid', (done) => {
       this.request.put({
         headers: {'content-type' : 'application/x-www-form-urlencoded'},
@@ -248,7 +249,8 @@ describe('Food Endpoints', () => {
 
         done()
       })
-    })
+    });
+
     it('should return a 404 if food does not exist', (done) => {
       this.request.put({
         headers: {'content-type' : 'application/x-www-form-urlencoded'},
@@ -259,7 +261,7 @@ describe('Food Endpoints', () => {
         done()
       })
     })
-  })
+  });
 
   describe('GET /api/search/foods', () => {
     beforeEach((done) => {
@@ -267,11 +269,12 @@ describe('Food Endpoints', () => {
       .then(() => {
       database.raw('INSERT INTO foods (name, calories, created_at) VALUES(?,?,?)', ['DonutB', 500, new Date])
       .then(() => done())})
-    })
+    });
+
     afterEach((done) => {
       database.raw('TRUNCATE foods RESTART IDENTITY')
       .then(() => done())
-    })
+    });
 
     it('should return foods which match the search parameter', (done) => {
       this.request.get({
@@ -292,7 +295,7 @@ describe('Food Endpoints', () => {
 
         done()
       })
-    })
+    });
 
     it('should return an empty array if no results found', (done) => {
       this.request.get({
@@ -305,6 +308,6 @@ describe('Food Endpoints', () => {
         assert.equal(searchResults.length, 0)
         done()
       })
-    })
-  })
-})
+    });
+  });
+});

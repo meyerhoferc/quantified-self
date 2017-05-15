@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const FoodsController = require('./lib/controllers/foods-controller')
+const MealsController = require('./lib/controllers/meals-controller')
 
 
 app.set('port', process.env.PORT || 3000);
@@ -16,6 +17,8 @@ app.post('/api/foods/', FoodsController.create);
 app.delete('/api/foods/:id', FoodsController.destroy);
 app.put('/api/foods/:id', FoodsController.update);
 app.get('/api/search/foods', FoodsController.search);
+
+app.get('/api/v1/meals/', MealsController.index);
 
 if (!module.parent) {
   app.listen(app.get('port'), function() {
