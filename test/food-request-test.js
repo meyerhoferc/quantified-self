@@ -28,7 +28,7 @@ describe('Food Endpoints', () => {
 
   describe('GET /api/foods/:id', () => {
     beforeEach((done) => {
-      database.raw('INSERT INTO foods (name, calories, created_at) VALUES(?,?,?)', ['Banana', 50, new Date])
+      database.raw('INSERT INTO foods (name, calories, created_at) VALUES(?,?,?)', ['Walnut', 50, new Date])
       .then(() => done())
     })
 
@@ -52,7 +52,7 @@ describe('Food Endpoints', () => {
         if (error) { done(error) }
 
         const id = 1
-        const name = 'Banana'
+        const name = 'Walnut'
         const calories = 50
 
         let parsedFood = JSON.parse(response.body)
@@ -119,7 +119,6 @@ describe('Food Endpoints', () => {
     it('should return a 200 status code if food found', (done) => {
       this.request.get('/api/foods/1', (error, response) => {
         if (error) { done(error) }
-
         assert.equal(response.statusCode, 200)
         done()
       })
