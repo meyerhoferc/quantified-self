@@ -146,6 +146,20 @@ describe('Meals Endpoints', function() {
         assert.equal(meal.total_calories, 100);
         done();
       });
-    })
-  })
+    });
+  });
+
+  describe('POST api/v1/meals', function() {
+    xit('should create a meal in the database', function(done) {
+      this.request.post({
+        headers: {'content-type': 'application/x-www-form-urlencoded'},
+        url: '/api/v1/meals?name=breakfast&total_calories=500&daily_log=' + new Date}, (error, response) => {
+          if (error) { done(error) };
+          const newMeal = JSON.parse(response.body);
+          assert.equal(newMeal.name, "breakfast");
+          assert.equal(newMeal.total_calories, 500);
+          done()
+      });
+    });
+  });
 });

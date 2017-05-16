@@ -20,6 +20,7 @@ app.get('/api/search/foods', FoodsController.search);
 
 app.get('/api/v1/meals/:id', MealsController.show);
 app.get('/api/v1/meals/', MealsController.index);
+app.post('/api/v1/meals/', MealsController.create);
 
 if (!module.parent) {
   app.listen(app.get('port'), function() {
