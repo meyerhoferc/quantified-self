@@ -69,7 +69,6 @@ describe('Meals Endpoints', function() {
     });
 
     it('should return a collection of meals', function(done){
-      this.timeout(100000);
       this.request.get('/api/v1/meals/', function(error, response){
         if(error){ done(error); }
         const meals = JSON.parse(response.body);
@@ -150,7 +149,9 @@ describe('Meals Endpoints', function() {
   });
 
   describe('POST api/v1/meals', function() {
-    xit('should create a meal in the database', function(done) {
+    it('should create a meal in the database', function(done) {
+      this.timeout(100000);
+
       this.request.post({
         headers: {'content-type': 'application/x-www-form-urlencoded'},
         url: '/api/v1/meals?name=breakfast&total_calories=500&daily_log=' + new Date}, (error, response) => {
