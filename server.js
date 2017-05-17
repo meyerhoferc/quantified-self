@@ -4,7 +4,7 @@ const FoodsController = require('./lib/controllers/foods-controller')
 const MealsController = require('./lib/controllers/meals-controller')
 const cors = require('cors');
 
-app.use(cors({origin: '*'}))
+app.use(cors({origin: '*'}));
 
 app.set('port', process.env.PORT || 3000);
 app.locals.title = "Quantified Self"
