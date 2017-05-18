@@ -209,9 +209,17 @@ describe('Meals Endpoints', function() {
         assert.equal(response.statusCode, 200);
         database.raw('SELECT COUNT(*) FROM meals')
         .then((data) => {
-          assert.equal(data.rowCount, 1)
-          done()
-        })
+          assert.equal(data.rowCount, 1);
+          done();
+        });
+      });
+    });
+
+    it('should return a 404 for an undefined meal id', function(done) {
+      this.request.delete('/api/v1/meals/111', (error, response) => {
+        if (error) { done(error) };
+        assert.equal(response.statusCode, 404);
+        done();
       });
     });
   });
