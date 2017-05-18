@@ -10,7 +10,7 @@ app.set('port', process.env.PORT || 3000);
 app.locals.title = "Quantified Self"
 
 app.get('/', function(request, response) {
-  response.send('The front page works.')
+  response.send('Welcome to the Quantified Self API')
 })
 
 app.get('/api/foods/:id', FoodsController.show);
