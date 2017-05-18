@@ -1,7 +1,7 @@
 const assert = require('chai').assert;
 const app = require('../server');
 const request = require('request');
-const pry = require('pryjs')
+const pry = require('pryjs');
 const environment    = process.env.NODE_ENV || 'test'
 const configuration  = require('../knexfile')[environment]
 const database  = require('knex')(configuration)
@@ -150,16 +150,68 @@ describe('Meals Endpoints', function() {
 
   describe('POST api/v1/meals', function() {
     it('should create a meal in the database', function(done) {
-      this.timeout(100000);
-
       this.request.post({
         headers: {'content-type': 'application/x-www-form-urlencoded'},
         url: '/api/v1/meals?name=breakfast&total_calories=500&daily_log=' + new Date}, (error, response) => {
           if (error) { done(error) };
+          assert.equal(response.statusCode, 200);
+
           const newMeal = JSON.parse(response.body);
           assert.equal(newMeal.name, "breakfast");
           assert.equal(newMeal.total_calories, 500);
           done()
+      });
+    });
+  });
+
+  describe('DELETE api/v1/meals/:id', function() {
+    beforeEach((done) => {
+      database.raw('INSERT INTO foods (name, calories, created_at) VALUES(?,?,?)', ['Doner', 500, new Date])
+      .then(() => {
+        database.raw('INSERT INTO foods (name, calories, created_at) VALUES(?,?,?)', ['Lettuce', 10, new Date])
+        .then(() => {
+          database.raw('INSERT INTO meals (name, total_calories, daily_log, created_at) VALUES(?,?,?,?)', ['Breakfast', 100, new Date, new Date])
+          .then(() => {
+            database.raw('INSERT INTO meals (name, total_calories, daily_log, created_at) VALUES(?,?,?,?)', ['Lunch', 20, new Date, new Date])
+            .then(() => {
+              database.raw('INSERT INTO meals_foods (food_id, meal_id, created_at) VALUES(?,?,?)', [1, 1, new Date])
+              .then(() => {
+                database.raw('INSERT INTO meals_foods (food_id, meal_id, created_at) VALUES(?,?,?)', [1, 1, new Date])
+                .then(() => {
+                  database.raw('INSERT INTO meals_foods (food_id, meal_id, created_at) VALUES(?,?,?)', [2, 2, new Date])
+                  .then(() => {
+                    database.raw('INSERT INTO meals_foods (food_id, meal_id, created_at) VALUES(?,?,?)', [2, 2, new Date])
+                    .then(() => done())
+                  }).catch(done)
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+
+    afterEach((done) => {
+      database.raw('TRUNCATE foods RESTART IDENTITY')
+      .then(() => {
+        database.raw('TRUNCATE meals_foods RESTART IDENTITY')
+        .then(() => {
+          database.raw('TRUNCATE meals RESTART IDENTITY')
+          .then(() => done());
+        });
+      });
+    });
+
+    it('should remove a meal from the database', function(done) {
+      this.timeout(100000);
+      this.request.delete('/api/v1/meals/1', (error, response) => {
+        if (error) { done(error) };
+        assert.equal(response.statusCode, 200);
+        database.raw('SELECT COUNT(*) FROM meals')
+        .then((data) => {
+          assert.equal(data.rowCount, 1)
+          done()
+        })
       });
     });
   });
