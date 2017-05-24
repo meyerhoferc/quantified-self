@@ -1,4 +1,17 @@
 ## Quantified Self API
+
+Quantified Self is a Node.js / Express API that provides CRUD functionality for foods and meals for the [Quantified Self Client](https://meyerhoferc.github.io/quantified-self-client).
+
+### Setup
+Clone this repo.
+
+`npm install`
+
+### Running the tests
+`knex migrate:latest`
+
+`npm test`
+
 Base Url: https://quantified-self-cm.herokuapp.com/
 ### Resources Available
 #### Meals
