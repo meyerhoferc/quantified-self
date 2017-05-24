@@ -7,6 +7,12 @@ Clone this repo.
 
 `npm install`
 
+### Run the app locally
+
+`npm start`
+
+Navigate to http://127.0.0.1:3000
+
 ### Running the tests
 `knex migrate:latest`
 
